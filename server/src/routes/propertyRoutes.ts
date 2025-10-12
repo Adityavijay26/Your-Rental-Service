@@ -10,10 +10,9 @@ import {
 
 const router = express.Router();
 
-// GET all properties
+
 router.get('/', getProperties);
 
-// GET featured properties
 router.get('/featured', getFeaturedProperties);
 
 // GET single property
