@@ -18,13 +18,13 @@ body {
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: #1f2937;
   background: linear-gradient(
       to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
+      #f9fafb
     )
-    rgb(var(--background-start-rgb));
+    #ffffff;
 }
 
 a {
