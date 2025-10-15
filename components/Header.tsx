@@ -4,10 +4,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Search, Menu, X, User, Heart, Bell, Home, Building, MapPin } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { signIn, signOut, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const { data: session } = useSession()
+  const router = useRouter()
 
   const navigation = [
     { name: 'Buy', href: '/buy', icon: Home },
@@ -69,10 +73,23 @@ export default function Header() {
               <span className="text-sm">Notifications</span>
             </button>
 
-            <button className="hidden md:flex items-center space-x-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
-              <User className="w-4 h-4" />
-              <span className="text-sm">Login</span>
-            </button>
+            {session ? (
+              <button
+                onClick={() => router.push('/logout')}
+                className="hidden md:flex items-center space-x-2 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                <User className="w-4 h-4" />
+                <span className="text-sm">Logout</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => router.push('/login')}
+                className="hidden md:flex items-center space-x-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                <User className="w-4 h-4" />
+                <span className="text-sm">Login</span>
+              </button>
+            )}
 
             {/* Mobile menu button */}
             <button

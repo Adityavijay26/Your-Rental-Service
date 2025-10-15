@@ -16,6 +16,8 @@ export default function Hero() {
   const [ageGroup, setAgeGroup] = useState('')
   const [gender, setGender] = useState('')
   const [amenities, setAmenities] = useState<string[]>([])
+  const [searchCount, setSearchCount] = useState<number | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
 
   const searchTypes = [
     { id: 'buy', label: 'Buy', icon: Home },
@@ -127,19 +129,19 @@ export default function Hero() {
   }
 
   const handleSearch = () => {
-    // Here you would implement the actual search logic
-    console.log('Searching with filters:', {
-      searchType,
-      location,
-      propertyType,
-      budget,
-      selectedDomains,
-      lifestyle,
-      occupation,
-      ageGroup,
-      gender,
-      amenities
+    setIsSearching(true)
+    fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ location, propertyType, budget }),
     })
+      .then((r) => r.json())
+      .then((data) => {
+        console.log('Search results:', data)
+        setSearchCount(data.count ?? 0)
+      })
+      .catch((e) => console.error(e))
+      .finally(() => setIsSearching(false))
   }
 
   return (
@@ -375,11 +377,17 @@ export default function Hero() {
             <div className="mt-4 pt-4 border-t border-gray-200">
               <button
                 onClick={handleSearch}
-                className="w-full bg-primary-600 text-white py-3 px-6 rounded-lg hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 text-base font-medium"
+              className="w-full bg-primary-600 text-white py-3 px-6 rounded-lg hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 text-base font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={isSearching}
               >
                 <Search className="w-5 h-5" />
-                <span>Find Properties & Roommates</span>
+              <span>{isSearching ? 'Searching…' : 'Find Properties & Roommates'}</span>
               </button>
+            {searchCount !== null && (
+              <div className="mt-3 text-center text-gray-700 text-sm">
+                Found <span className="font-semibold">{searchCount}</span> matching properties
+              </div>
+            )}
             </div>
           </div>
 
